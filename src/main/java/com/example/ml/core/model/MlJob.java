@@ -14,6 +14,7 @@ import java.util.UUID;
 public class MlJob {
     private final UUID jobId;
     private final UUID recordId;
+    @Builder.Default
     private MlJobStatus status = MlJobStatus.QUEUED;
 
     private final String fileUrl;
@@ -25,6 +26,7 @@ public class MlJob {
     private final boolean tasks;
 
     private final String callbackUrl;
+    @Builder.Default
     private MlResult mlResult = null;
 
     public void changeStatus(MlJobStatus newStatus) {
