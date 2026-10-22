@@ -28,6 +28,7 @@ public class MlJobDatabaseAdapter implements MlJobDatabasePort {
                 .summary(job.isSummary())
                 .tasks(job.isTasks())
                 .callbackUrl(job.getCallbackUrl())
+                .mlResult(job.getMlResult())
                 .build();
 
         repository.save(entity);

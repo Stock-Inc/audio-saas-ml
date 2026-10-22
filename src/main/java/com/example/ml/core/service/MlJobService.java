@@ -1,6 +1,7 @@
 package com.example.ml.core.service;
 
 import com.example.ml.core.model.MlJob;
+import com.example.ml.core.pipeline.MlProcessingPipeline;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MlJobService {
     private final MlJobDatabasePort databasePort;
+    private final MlProcessingPipeline pipeline;
 
     public MlJob createJob(CreateMlJobCommand command) {
         UUID jobId = command.requestId();
@@ -35,6 +37,15 @@ public class MlJobService {
                 .build();
 
         databasePort.save(job);
+        pipeline.processJobAsync(job);
         return job;
     }
+
+    // TODO: exceptions (handler, custom ...)
+    public MlJob getJob(UUID jobId) {
+        return databasePort.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found: " + jobId));
+    }
+
+    // TODO: getCompletedJob method
 }
