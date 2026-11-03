@@ -32,8 +32,15 @@ public class LocalFileStorageAdapter implements FileStoragePort {
 
     }
 
+    // TODO: scheduled
     @Override
     public void delete(String path) {
-
+        Path deletePath = Path.of(path);
+        try {
+            Files.delete(deletePath);
+        } catch (IOException e) {
+            // TODO: exception
+            throw new RuntimeException();
+        }
     }
 }

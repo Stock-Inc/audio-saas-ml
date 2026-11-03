@@ -9,6 +9,7 @@ import java.util.UUID;
 public record CreateMlJobCommand(
         UUID requestId,
         UUID recordId,
+        // TODO: change MultipartFile
         MultipartFile file,
         boolean diarization,
         boolean summary,
