@@ -27,7 +27,6 @@ public class MlJobDatabaseAdapter implements MlJobDatabasePort {
                 .diarization(job.isDiarization())
                 .summary(job.isSummary())
                 .tasks(job.isTasks())
-                .callbackUrl(job.getCallbackUrl())
                 .mlResult(job.getMlResult())
                 .build();
 
@@ -48,7 +47,6 @@ public class MlJobDatabaseAdapter implements MlJobDatabasePort {
                         .diarization(entity.isDiarization())
                         .summary(entity.isSummary())
                         .tasks(entity.isTasks())
-                        .callbackUrl(entity.getCallbackUrl())
                         .mlResult(entity.getMlResult())
                         .build());
     }

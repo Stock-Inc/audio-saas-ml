@@ -25,7 +25,6 @@ public class MlJob {
     private final boolean summary;
     private final boolean tasks;
 
-    private final String callbackUrl;
     @Builder.Default
     private MlResult mlResult = null;
 

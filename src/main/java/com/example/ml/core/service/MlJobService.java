@@ -43,7 +43,6 @@ public class MlJobService {
                 .diarization(command.diarization())
                 .summary(command.summary())
                 .tasks(command.tasks())
-                .callbackUrl(command.callbackUrl())
                 .build();
 
         databasePort.save(job);

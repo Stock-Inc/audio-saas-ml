@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 import java.util.UUID;
 
+@Deprecated
 @Component
 public class RestTemplateWebhookAdapter implements WebhookPort {
 

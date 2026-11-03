@@ -25,8 +25,7 @@ public class MlJobController {
             @RequestParam("requestId") UUID requestId,
             @RequestParam("recordId") UUID recordId,
             @RequestPart("file") MultipartFile file,
-            @RequestPart("options") JobOptions options,
-            @RequestParam("callbackUrl") String callbackUrl
+            @RequestPart("options") JobOptions options
             ) {
 
 
@@ -38,7 +37,6 @@ public class MlJobController {
                 .diarization(options.diarization())
                 .summary(options.summary())
                 .tasks(options.tasks())
-                .callbackUrl(callbackUrl)
                 .build();
 
         mlJobService.createJob(command);
