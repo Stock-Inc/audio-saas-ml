@@ -28,6 +28,10 @@ public class MlJob {
     @Builder.Default
     private MlResult mlResult = null;
 
+    public void changeResult(MlResult result) {
+        this.mlResult = result;
+    }
+
     public void changeStatus(MlJobStatus newStatus) {
         this.status = newStatus;
     }
