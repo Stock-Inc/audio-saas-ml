@@ -1,4 +1,4 @@
-package com.example.ml.infrastructure.api;
+package com.example.ml.infrastructure.api.controller;
 
 import com.example.ml.core.model.MlJob;
 import com.example.ml.core.model.MlJobStatus;
