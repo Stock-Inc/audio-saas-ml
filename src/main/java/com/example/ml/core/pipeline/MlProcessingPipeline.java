@@ -4,7 +4,7 @@ import com.example.ml.core.model.MlJob;
 import com.example.ml.core.model.MlJobStatus;
 import com.example.ml.core.model.MlResult;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
-import com.example.ml.core.port.outgoing.WebhookPort;
+import com.example.ml.core.port.outgoing.SttClientPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,31 +16,24 @@ import java.util.List;
 public class MlProcessingPipeline {
 
     private final MlJobDatabasePort databasePort;
-    private final WebhookPort webhookPort;
+    private final SttClientPort sttClientPort;
 
     @Async
     public void processJobAsync(MlJob job) {
         try {
-
-            job.changeStatus(MlJobStatus.PROCESSING);
+            job.changeStatus(MlJobStatus.TRANSCRIBING);
             databasePort.save(job);
 
-            Thread.sleep(10000);
-
-            MlResult mockResult = generateMockResult();
-
-            job.complete(mockResult);
+            MlResult.Transcript transcript = sttClientPort.transcribe(job.getFileUrl(), true);
+            MlResult halfResult = new MlResult(transcript, null);
+            job.changeResult(halfResult);
+            job.changeStatus(MlJobStatus.ANALYSING);
             databasePort.save(job);
 
-            webhookPort.sendCallback(
-                    job.getCallbackUrl(),
-                    job.getJobId(),
-                    job.getRecordId(),
-                    job.getStatus().name()
-            );
+            job.complete(halfResult);
+            databasePort.save(job);
 
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        } catch (Exception e) {
         }
     }
 

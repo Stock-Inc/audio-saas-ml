@@ -23,8 +23,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+      ML_WHISPER_URL: ${WHISPER_URL}
+      ML_WHISPER_READ_TIMEOUT: ${WHISPER_READ_TIMEOUT}
+      ML_WHISPER_CONNECT_TIMEOUT: ${WHISPER_CONNECT_TIMEOUT}
     ports:
-      - "8080:8080"
+      - "8084:8084"
     depends_on:
       postgres:
         condition: service_healthy

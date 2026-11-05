@@ -13,7 +13,6 @@ public record CreateMlJobCommand(
         MultipartFile file,
         boolean diarization,
         boolean summary,
-        boolean tasks,
-        String callbackUrl
+        boolean tasks
 ) {
 }
