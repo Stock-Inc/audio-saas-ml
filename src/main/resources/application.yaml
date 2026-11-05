@@ -12,3 +12,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+ml:
+  whisper:
+    url: http://localhost:8000
+    read-timeout: 30m
+    connect-timeout: 10s
