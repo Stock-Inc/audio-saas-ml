@@ -39,3 +39,5 @@ ml:
   kafka:
     topic:
       job-results: ml-job-results
+      partitions: 1
+      replicas: 1
