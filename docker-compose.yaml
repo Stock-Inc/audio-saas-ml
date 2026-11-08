@@ -96,6 +96,7 @@ services:
       ML_WHISPER_READ_TIMEOUT: ${ML_WHISPER_READ_TIMEOUT}
       ML_WHISPER_CONNECT_TIMEOUT: ${ML_WHISPER_CONNECT_TIMEOUT}
       ML_KAFKA_TOPIC_JOB_RESULTS: ${ML_KAFKA_TOPIC_JOB_RESULTS}
+      ML_PROCESSING_MOCK_ENABLED: ${ML_PROCESSING_MOCK_ENABLED:-false}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

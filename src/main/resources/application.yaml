@@ -32,6 +32,8 @@ spring:
         max.block.ms: 10000
 
 ml:
+  processing:
+    mock-enabled: ${ML_PROCESSING_MOCK_ENABLED:false}
   whisper:
     url: ${ML_WHISPER_URL:http://localhost:8000}
     read-timeout: ${ML_WHISPER_READ_TIMEOUT:30m}
