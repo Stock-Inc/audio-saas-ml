@@ -6,9 +6,9 @@ spring:
     name: ml
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
-    username: postgres
-    password: mysecret
+    url: jdbc:postgresql://localhost:5433/${ML_POSTGRES_DB}
+    username: ${ML_POSTGRES_USER}
+    password: ${ML_POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -16,8 +16,26 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_URL}
+    properties:
+      schema.registry.url: ${SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+        auto.register.schemas: true
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
+        max.block.ms: 10000
+
 ml:
   whisper:
-    url: http://localhost:8000
-    read-timeout: 30m
-    connect-timeout: 10s
+    url: ${ML_WHISPER_URL:http://localhost:8000}
+    read-timeout: ${ML_WHISPER_READ_TIMEOUT:30m}
+    connect-timeout: ${ML_WHISPER_CONNECT_TIMEOUT:10s}
+  kafka:
+    topic:
+      job-results: ml-job-results
