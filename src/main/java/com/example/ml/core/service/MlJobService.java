@@ -1,39 +1,48 @@
 package com.example.ml.core.service;
 
 import com.example.ml.core.model.MlJob;
-import com.example.ml.core.pipeline.MlProcessingPipeline;
+import com.example.ml.core.pipeline.JobProcessingPipeline;
+import com.example.ml.core.port.outgoing.FileStoragePort;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class MlJobService {
     private final MlJobDatabasePort databasePort;
-    private final MlProcessingPipeline pipeline;
+    private final FileStoragePort fileStoragePort;
+    private final JobProcessingPipeline pipeline;
 
     public MlJob createJob(CreateMlJobCommand command) {
         UUID jobId = command.requestId();
         MultipartFile file = command.file();
 
-        // TODO: fileStorageService (save file)
-        String localFilePath = "/tmp/ml_storage/" + jobId + "_" + file.getOriginalFilename();
+        String fileUrl;
+        try {
+            InputStream inputStream = file.getInputStream();
+            fileUrl = fileStoragePort.save(inputStream, jobId);
+        } catch (IOException e) {
+            // TODO: exception
+            throw new RuntimeException();
+        }
 
 
         // TODO: mapper
         MlJob job = MlJob.builder()
                 .jobId(jobId)
                 .recordId(command.recordId())
-                .fileUrl(localFilePath)
+                .fileUrl(fileUrl)
                 .fileName(file.getOriginalFilename())
                 .fileContentType(file.getContentType())
                 .diarization(command.diarization())
                 .summary(command.summary())
                 .tasks(command.tasks())
-                .callbackUrl(command.callbackUrl())
                 .build();
 
         databasePort.save(job);

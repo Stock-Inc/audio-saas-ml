@@ -42,9 +42,6 @@ public class MlJobEntity {
     @Column(name = "opt_tasks")
     private boolean tasks;
 
-    @Column(name = "callback_url", nullable = false)
-    private String callbackUrl;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "ml_result", columnDefinition = "jsonb")
     private MlResult mlResult;

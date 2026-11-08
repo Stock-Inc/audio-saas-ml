@@ -25,9 +25,12 @@ public class MlJob {
     private final boolean summary;
     private final boolean tasks;
 
-    private final String callbackUrl;
     @Builder.Default
     private MlResult mlResult = null;
+
+    public void changeResult(MlResult result) {
+        this.mlResult = result;
+    }
 
     public void changeStatus(MlJobStatus newStatus) {
         this.status = newStatus;

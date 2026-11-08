@@ -2,7 +2,8 @@ package com.example.ml.core.model;
 
 public enum MlJobStatus {
     QUEUED,
-    PROCESSING,
+    TRANSCRIBING,
+    ANALYSING,
     COMPLETED,
     FAILED
 }

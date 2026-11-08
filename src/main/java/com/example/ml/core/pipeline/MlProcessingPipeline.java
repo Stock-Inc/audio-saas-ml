@@ -3,59 +3,47 @@ package com.example.ml.core.pipeline;
 import com.example.ml.core.model.MlJob;
 import com.example.ml.core.model.MlJobStatus;
 import com.example.ml.core.model.MlResult;
+import com.example.ml.core.port.outgoing.MessageBrokerPort;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
-import com.example.ml.core.port.outgoing.WebhookPort;
+import com.example.ml.core.port.outgoing.SttClientPort;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@ConditionalOnProperty(prefix = "ml.processing", name = "mock-enabled", havingValue = "false", matchIfMissing = true)
 @RequiredArgsConstructor
-public class MlProcessingPipeline {
+@Slf4j
+public class MlProcessingPipeline implements JobProcessingPipeline {
 
     private final MlJobDatabasePort databasePort;
-    private final WebhookPort webhookPort;
+    private final SttClientPort sttClientPort;
+    private final MessageBrokerPort messageBrokerPort;
 
     @Async
+    @Override
     public void processJobAsync(MlJob job) {
         try {
-
-            job.changeStatus(MlJobStatus.PROCESSING);
+            job.changeStatus(MlJobStatus.TRANSCRIBING);
             databasePort.save(job);
 
-            Thread.sleep(10000);
-
-            MlResult mockResult = generateMockResult();
-
-            job.complete(mockResult);
+            MlResult.Transcript transcript = sttClientPort.transcribe(job.getFileUrl(), true);
+            MlResult halfResult = new MlResult(transcript, null);
+            job.changeResult(halfResult);
+            job.changeStatus(MlJobStatus.ANALYSING);
             databasePort.save(job);
 
-            webhookPort.sendCallback(
-                    job.getCallbackUrl(),
-                    job.getJobId(),
-                    job.getRecordId(),
-                    job.getStatus().name()
-            );
+            job.complete(halfResult);
+            databasePort.save(job);
 
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            log.error("Processing failed for job '{}'", job.getJobId(), e);
+            job.changeStatus(MlJobStatus.FAILED);
+            databasePort.save(job);
         }
-    }
 
-    private MlResult generateMockResult() {
-        return new MlResult(
-                new MlResult.Transcript(List.of(
-                        new MlResult.Segment(1, "SPEAKER_01", 0.5, 5.8, "Добрый день, это тестовая расшифровка от заглушки.")
-                )),
-        new MlResult.Analysis(
-                "На встрече обсуждалось создание API-заглушки.",
-                List.of("API", "Spring Boot"),
-                List.of("Заглушка готова, можно интегрироваться"),
-                List.of("Начать разработку личного кабинета"),
-                List.of(new MlResult.TaskItem("Настроить БД", "бекендер2"))
-        )
-        );
+        messageBrokerPort.publish(job);
     }
 }
