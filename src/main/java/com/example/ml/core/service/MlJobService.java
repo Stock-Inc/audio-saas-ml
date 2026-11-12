@@ -1,7 +1,7 @@
 package com.example.ml.core.service;
 
 import com.example.ml.core.model.MlJob;
-import com.example.ml.core.pipeline.JobProcessingPipeline;
+import com.example.ml.core.pipeline.MlJobProcessingPipeline;
 import com.example.ml.core.port.outgoing.FileStoragePort;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,9 @@ import java.util.UUID;
 public class MlJobService {
     private final MlJobDatabasePort databasePort;
     private final FileStoragePort fileStoragePort;
-    private final JobProcessingPipeline pipeline;
+    private final MlJobProcessingPipeline pipeline;
+
+    // TODO: exceptions
 
     public MlJob createJob(CreateMlJobCommand command) {
         UUID jobId = command.requestId();
@@ -28,7 +30,6 @@ public class MlJobService {
             InputStream inputStream = file.getInputStream();
             fileUrl = fileStoragePort.save(inputStream, jobId);
         } catch (IOException e) {
-            // TODO: exception
             throw new RuntimeException();
         }
 
@@ -50,11 +51,13 @@ public class MlJobService {
         return job;
     }
 
-    // TODO: exceptions (handler, custom ...)
     public MlJob getJob(UUID jobId) {
         return databasePort.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found: " + jobId));
     }
 
-    // TODO: getCompletedJob method
+    public MlJob getCompletedJob(UUID jobId) {
+        return databasePort.findCompletedById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not completed yet"));
+    }
 }

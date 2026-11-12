@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @ConditionalOnProperty(prefix = "ml.processing", name = "mock-enabled", havingValue = "false", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
-public class MlProcessingPipeline implements JobProcessingPipeline {
+public class MlProcessingPipeline implements MlJobProcessingPipeline {
 
     private final MlJobDatabasePort databasePort;
     private final SttClientPort sttClientPort;
