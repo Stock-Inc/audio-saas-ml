@@ -25,7 +25,12 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:1.6.3")
 	implementation("org.springframework.boot:spring-boot-starter-kafka")
 	implementation("org.apache.avro:avro:1.12.2")
-	implementation("io.confluent:kafka-avro-serializer:8.2.0")
+	implementation("io.confluent:kafka-avro-serializer:8.2.0") {
+		exclude(
+			group = "io.swagger.core.v3",
+			module = "swagger-annotations"
+		)
+	}
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
