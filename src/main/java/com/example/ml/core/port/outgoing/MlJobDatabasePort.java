@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface MlJobDatabasePort {
     void save(MlJob job);
     Optional<MlJob> findById(UUID jobId);
+    Optional<MlJob> findCompletedById(UUID jobId);
 }
