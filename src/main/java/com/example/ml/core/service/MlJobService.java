@@ -19,6 +19,8 @@ public class MlJobService {
     private final FileStoragePort fileStoragePort;
     private final JobProcessingPipeline pipeline;
 
+    // TODO: exceptions
+
     public MlJob createJob(CreateMlJobCommand command) {
         UUID jobId = command.requestId();
         MultipartFile file = command.file();
@@ -28,7 +30,6 @@ public class MlJobService {
             InputStream inputStream = file.getInputStream();
             fileUrl = fileStoragePort.save(inputStream, jobId);
         } catch (IOException e) {
-            // TODO: exception
             throw new RuntimeException();
         }
 
@@ -50,11 +51,13 @@ public class MlJobService {
         return job;
     }
 
-    // TODO: exceptions (handler, custom ...)
     public MlJob getJob(UUID jobId) {
         return databasePort.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found: " + jobId));
     }
 
-    // TODO: getCompletedJob method
+    public MlJob getCompletedJob(UUID jobId) {
+        return databasePort.findCompletedById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not completed yet"));
+    }
 }
