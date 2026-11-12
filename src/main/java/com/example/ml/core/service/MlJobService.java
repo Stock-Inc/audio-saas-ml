@@ -1,7 +1,7 @@
 package com.example.ml.core.service;
 
 import com.example.ml.core.model.MlJob;
-import com.example.ml.core.pipeline.JobProcessingPipeline;
+import com.example.ml.core.pipeline.MlJobProcessingPipeline;
 import com.example.ml.core.port.outgoing.FileStoragePort;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class MlJobService {
     private final MlJobDatabasePort databasePort;
     private final FileStoragePort fileStoragePort;
-    private final JobProcessingPipeline pipeline;
+    private final MlJobProcessingPipeline pipeline;
 
     // TODO: exceptions
 

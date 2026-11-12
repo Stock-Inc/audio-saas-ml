@@ -17,7 +17,7 @@ import java.util.List;
 @ConditionalOnProperty(prefix = "ml.processing", name = "mock-enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
-public class MockMlProcessingPipeline implements JobProcessingPipeline {
+public class MockMlProcessingPipeline implements MlJobProcessingPipeline {
     private final MlJobDatabasePort databasePort;
     private final MessageBrokerPort messageBrokerPort;
 
