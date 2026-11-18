@@ -3,6 +3,7 @@ package com.example.ml.core.pipeline;
 import com.example.ml.core.model.MlJob;
 import com.example.ml.core.model.MlJobStatus;
 import com.example.ml.core.model.MlResult;
+import com.example.ml.core.port.outgoing.AnalysisClientPort;
 import com.example.ml.core.port.outgoing.MessageBrokerPort;
 import com.example.ml.core.port.outgoing.MlJobDatabasePort;
 import com.example.ml.core.port.outgoing.SttClientPort;
@@ -21,6 +22,7 @@ public class MlProcessingPipeline implements MlJobProcessingPipeline {
     private final MlJobDatabasePort databasePort;
     private final SttClientPort sttClientPort;
     private final MessageBrokerPort messageBrokerPort;
+    private final AnalysisClientPort analysisClientPort;
 
     @Async
     @Override
@@ -29,13 +31,18 @@ public class MlProcessingPipeline implements MlJobProcessingPipeline {
             job.changeStatus(MlJobStatus.TRANSCRIBING);
             databasePort.save(job);
 
-            MlResult.Transcript transcript = sttClientPort.transcribe(job.getFileUrl(), true);
+            MlResult.Transcript transcript = sttClientPort.transcribe(job.getFileUrl(), job.isDiarization());
             MlResult halfResult = new MlResult(transcript, null);
             job.changeResult(halfResult);
-            job.changeStatus(MlJobStatus.ANALYSING);
-            databasePort.save(job);
 
-            job.complete(halfResult);
+            MlResult.Analysis analysis = null;
+            if (job.isSummary() || job.isTasks()) {
+                job.changeStatus(MlJobStatus.ANALYSING);
+                databasePort.save(job);
+                analysis = analysisClientPort.analyze(transcript, job.isSummary(), job.isTasks());
+            }
+
+            job.complete(new MlResult(transcript, analysis));
             databasePort.save(job);
 
         } catch (Exception e) {
